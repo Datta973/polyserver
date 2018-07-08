@@ -409,6 +409,9 @@ function checkCollision(id, coQualiPellets) {
         if (dist(plyr, pellet) < 32 + pellet.radius) {
             collidedPellets.push(pellet);
             qTree.remove(pellet);
+            if(pellet.radius != 10){
+                qTree.insert({ x: Math.floor(Math.random() * 3000), y: Math.floor(Math.random() * 3000), radius: 10 });
+            }
             plyr.experience += pellet.radius == 10 ? 0.25 : 0.5;
             if (plyr.experience >= points_sc[plyr.level]) {
                 // plyr.experience -= points_sc[plyr.level];
