@@ -249,7 +249,7 @@ function resend() {
                             }
 
                             if (players[enemy].bot) {
-                                insertBot(players[enemy]);
+                                insertBot(players[enemy]);9jg
                             } else {
                                 io.to(enemy).emit("death");
                             }
@@ -376,7 +376,7 @@ function resend() {
         viewport.w = temp_data[player].clientWidth;
         viewport.h = temp_data[player].clientHeight;
         requiredPelletData = qTree.query(viewport);
-        if(requiredPelletData.length < 10){
+        if(requiredPelletData.length < 20){
             qTree.insert({ x: random(players[player].x - viewport.w/2,players[player].x + viewport.w/2), y: random(players[player].y - viewport.h/2,players[player].y + viewport.h/2), radius: 10 });
         }
         if (!players[player].isFiring) {
