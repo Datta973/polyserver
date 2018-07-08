@@ -377,7 +377,7 @@ function resend() {
         viewport.h = temp_data[player].clientHeight;
         requiredPelletData = qTree.query(viewport);
         if(requiredPelletData.length < 10){
-            qTree.insert({ x: players[player].x - viewport.w, y: players[player].y - viewport.h, radius: 10 });
+            qTree.insert({ x: players[player].x - viewport.w/2, y: players[player].y - viewport.h/2, radius: 10 });
         }
         if (!players[player].isFiring) {
             collisionport.x = players[player].x;
