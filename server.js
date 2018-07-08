@@ -42,6 +42,7 @@ let tempY = 0;
 let ran_names = ["Garry", "Emmett", "Hank", "Vincenzo", "Cornell", "Darryl", "Arturo", "Jewell", "Kent", "Luigi", "Haywood", "King", "Lonnie", "Renaldo", "Johnny", "Tad", "Abel", "Matt", "Shirley", "Valentin", "Nelson", "Vicente", "Keneth", "Darell", "Anton", "Theron", "Dana", "Israel", "Newton", "Willis", "Scot", "Erasmo", "Barney", "Charley", "Louie", "Sylvester", "Johnathan", "Laverne", "Zachery", "Arlen", "Sydney", "Luke", "Keith", "Jc", "Harland", "Monty", "Chas", "Tanner", "Kim", "Dwayne", "Veronica", "Marna", "Tina", "Denisha", "Mechelle", "Fatimah", "Marva", "Valrie", "Danelle", "Fernande"]
 let used_names = [];
 let plyr = {};
+let playerCount = 0;
 
 const RAD = (Math.PI / 180);
 
@@ -104,6 +105,7 @@ function insertBot(bot) {
 
 
 io.on('connection', function (socket) {
+    playerCount++;
     // players[socket.id] = {
     //     x: 0,
     //     y: 0,
@@ -131,6 +133,10 @@ io.on('connection', function (socket) {
     // circles[socket.id] = new C(new V(), 32);
     socket.on("s_ping",function(){
         socket.emit("s_pong");
+    })
+
+    socket.on("p_count",function(){
+        socket.emit("p_count",playerCount)
     })
 
     socket.on("start_game", function (data) {
@@ -175,7 +181,7 @@ io.on('connection', function (socket) {
     socket.on('disconnect', function () {
         socket.removeAllListeners("update_data");
         socket.removeAllListeners('fire');
-
+        playerCount--;
         delete players[socket.id];
         delete temp_data[socket.id];
     })
