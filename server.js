@@ -255,7 +255,7 @@ function resend() {
                             }
 
                             if (players[enemy].bot) {
-                                insertBot(players[enemy]);9jg
+                                insertBot(players[enemy]);
                             } else {
                                 io.to(enemy).emit("death");
                             }
