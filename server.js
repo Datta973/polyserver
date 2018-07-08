@@ -83,6 +83,7 @@ function insertBot(bot) {
         score: 0,
         bot: true,
         invincible: true,
+        cool_counter: 0
     }
     temp_data[bot.id] = {
         clientWidth: 1024,
@@ -92,7 +93,6 @@ function insertBot(bot) {
         back: false,
         level: 1,
         botNearest: {},
-        cool_counter: 0,
         waste: 0,
         fireTime: 0
     }
@@ -147,7 +147,8 @@ io.on('connection', function (socket) {
             alive: true,
             username: data.username.replace(/<[^>]*>/, ""),
             score: 0,
-            invincible: true
+            invincible: true,
+            cool_counter: 0
         }
         temp_data[socket.id] = {
             clientWidth: 1024,
@@ -156,7 +157,7 @@ io.on('connection', function (socket) {
             isFiring: false,
             back: false,
             level: 1,
-            cool_counter: 0,
+            
             waste: 0,
             fireTime: 0
         }
@@ -186,11 +187,11 @@ io.on('connection', function (socket) {
     })
 
     socket.on("fire", function () {
-        if (players[socket.id].freezed || temp_data[socket.id].cool_counter != 0) return;
+        if (players[socket.id].freezed || players[socket.id].cool_counter != 0) return;
         temp_data[socket.id].isFiring = true;
         temp_data[socket.id].angle = players[socket.id].angle;
         players[socket.id].freezed = true;
-        temp_data[socket.id].cool_counter = 5 * temp_data[socket.id].level;
+        players[socket.id].cool_counter = 5 * temp_data[socket.id].level;
     })
 
 
@@ -219,7 +220,7 @@ io.on('connection', function (socket) {
 
 function resend() {
     for (var player in players) {
-        temp_data[player].cool_counter -= temp_data[player].cool_counter <= 0 ? 0 : 1;
+        players[player].cool_counter -= players[player].cool_counter <= 0 ? 0 : 1;
         tempCos = Math.cos(RAD * -(temp_data[player].angle - 90));
         tempSin = Math.sin(RAD * -(temp_data[player].angle - 90));
         tempX = ((temp_data[player].level * test_var) + projectile_range) * tempCos;
@@ -331,11 +332,11 @@ function resend() {
                                 players[player].nitro = false;
                                 players[player].angle = (Math.atan2((players[player].y - players[enemy].y), (players[player].x - players[enemy].x)) * 180 / Math.PI - 90);
                                 if (dist({ x: players[player].x, y: players[player].y }, players[enemy]) < players[player].level * 100) {
-                                    if (!players[player].freezed && temp_data[player].cool_counter == 0) {
+                                    if (!players[player].freezed && players[player].cool_counter == 0) {
                                         temp_data[player].isFiring = true;
                                         temp_data[player].angle = players[player].angle;
                                         players[player].freezed = true;
-                                        temp_data[player].cool_counter = 5 * temp_data[player].level;
+                                        players[player].cool_counter = 5 * temp_data[player].level;
                                     }
                                 }
                             }else{
@@ -375,6 +376,9 @@ function resend() {
         viewport.w = temp_data[player].clientWidth;
         viewport.h = temp_data[player].clientHeight;
         requiredPelletData = qTree.query(viewport);
+        if(requiredPelletData.length < 10){
+            qTree.insert({ x: players[player].x - viewport.w, y: players[player].y - viewport.h, radius: 10 });
+        }
         if (!players[player].isFiring) {
             collisionport.x = players[player].x;
             collisionport.y = players[player].y;
@@ -409,9 +413,7 @@ function checkCollision(id, coQualiPellets) {
         if (dist(plyr, pellet) < 32 + pellet.radius) {
             collidedPellets.push(pellet);
             qTree.remove(pellet);
-            if(pellet.radius != 10){
-                qTree.insert({ x: Math.floor(Math.random() * 3000), y: Math.floor(Math.random() * 3000), radius: 10 });
-            }
+            
             plyr.experience += pellet.radius == 10 ? 0.25 : 0.5;
             if (plyr.experience >= points_sc[plyr.level]) {
                 // plyr.experience -= points_sc[plyr.level];
@@ -448,4 +450,4 @@ function d2r(d) {
     return r;
 }
 
-http.listen(process.env.PORT || 8080)
+http.listen(process.env.PORT || 8000)
