@@ -105,7 +105,7 @@ function insertBot(bot) {
 
 
 io.on('connection', function (socket) {
-    playerCount++;
+    playerCount +=1;
     // players[socket.id] = {
     //     x: 0,
     //     y: 0,
