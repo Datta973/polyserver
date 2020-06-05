@@ -1,2 +1,2 @@
 # polyserver
-Well...this is a server
+This is the backend server designed for the game Polys.
